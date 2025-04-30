@@ -1,0 +1,29 @@
+from fastapi import FastAPI, Query
+from fastapi.responses import StreamingResponse
+from downloader import download_soundcloud_tracks, zip_tracks
+
+app = FastAPI()
+
+@app.get("/download")
+def download_as_zip(url: str = Query(..., description="SoundCloud track or playlist URL")):
+    # Step 1: Download tracks
+    track_paths = download_soundcloud_tracks(url)
+
+    if not track_paths:
+        return {"error": "No tracks downloaded."}
+
+    # Step 2: Zip the tracks
+    zip_path = zip_tracks(track_paths)
+
+    # Step 3: Stream the ZIP file
+    def iterfile():
+        with open(zip_path, mode="rb") as f:
+            yield from f
+
+    return StreamingResponse(
+        iterfile(),
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{zip_path.split("/")[-1]}"'
+        }
+    )
