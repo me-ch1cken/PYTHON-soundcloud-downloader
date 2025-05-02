@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
 from downloader import download_soundcloud_tracks, zip_tracks
+from playlistcontent import get_playlist_metadata
 
 app = FastAPI()
 
@@ -27,3 +28,7 @@ def download_as_zip(url: str = Query(..., description="SoundCloud track or playl
             "Content-Disposition": f'attachment; filename="{zip_path.split("/")[-1]}"'
         }
     )
+
+@app.get("/content")
+def get_playlist_content(url: str = Query(..., description="SoundCloud track or playlist URL")):
+    return get_playlist_metadata(url)
