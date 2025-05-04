@@ -2,7 +2,7 @@ from sclib import SoundcloudAPI, Track, Playlist
 
 def get_playlist_metadata(url: str) -> Playlist:
     api = SoundcloudAPI()
-    playlist = api.resolve('https://soundcloud.com/solidtracksrecords/sets/solid023-various-artists-solid')
+    playlist = api.resolve(url)
 
     assert type(playlist) is Playlist, "Expected a Playlist object"
 
