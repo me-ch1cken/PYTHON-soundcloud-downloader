@@ -1,9 +1,18 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from downloader import download_soundcloud_tracks, zip_tracks
 from playlistcontent import get_playlist_metadata
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/download")
 def download_as_zip(url: str = Query(..., description="SoundCloud track or playlist URL")):
