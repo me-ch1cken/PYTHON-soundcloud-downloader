@@ -20,12 +20,14 @@ def download_soundcloud_tracks(playlist_url: str) -> list[str]:
         "--path", DOWNLOAD_DIR,
         "-l", playlist_url,
         "--client-id", client_id,
-        "--download-archive", os.path.join(DOWNLOAD_DIR, ".scdl-archive.txt")
+        "--download-archive", os.path.join(DOWNLOAD_DIR, ".scdl-archive.txt"),
+        "--no-playlist-folder"
     ]
 
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as proc:
         for line in proc.stdout:
             print(line, end='')
+        proc.wait()
 
     # Collect downloaded .mp3 files
     downloaded_files = [
@@ -33,6 +35,9 @@ def download_soundcloud_tracks(playlist_url: str) -> list[str]:
         for f in os.listdir(DOWNLOAD_DIR)
         if not f.endswith(".txt")
     ]
+
+    print(f"Downloaded {len(downloaded_files)} tracks.")
+    print("Downloaded files:", downloaded_files)
 
     return downloaded_files
 
