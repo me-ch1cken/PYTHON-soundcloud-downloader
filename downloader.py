@@ -50,3 +50,17 @@ def zip_tracks(track_paths: list[str]) -> str:
             zipf.write(file_path, arcname=os.path.basename(file_path))  # Clean filename inside zip
 
     return zip_path
+
+def clear_downloads():
+    if os.path.exists(DOWNLOAD_DIR):
+        for filename in os.listdir(DOWNLOAD_DIR):
+            file_path = os.path.join(DOWNLOAD_DIR, filename)
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                elif os.path.isdir(file_path):
+                    # Optional: remove subdirectories too
+                    import shutil
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
